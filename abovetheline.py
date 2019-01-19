@@ -1,5 +1,6 @@
 # Imports
 import matplotlib.pyplot as plt
+import random
 import numpy as np
 import pandas as pd
 
@@ -9,7 +10,13 @@ b = [float(input ('Y Intercept?'))]*4
 
 # Set up rotations and test points
 rotations = range(4)
-testpoints = [[0,0],[1,9],[1,-9],[-1,9],[-1,-9],[10,5],[2,-5],[-3,4],[-3,-4],[8,2],[-8,2],[2,-8],[2,8],[10,6],[1,3],[-7,-1],[-10,-4],[-1,-1],[-1,1]]
+testpoints = []
+for i in range(100):
+  testpoints.append([random.randint(-50,51), random.randint(-50,51)])
+
+# Create points series and dataframe for results
+points = pd.Series( data=testpoints )
+results = pd.DataFrame( columns=rotations )
 
 # Create Rotated Slopes and Intercepts
 for rotation in range(4):
@@ -22,23 +29,20 @@ for rotation in range(4):
     m[rotation] = -1/m[0]
     b[rotation] = b[0]/m[0]
     
-# Create DataFrame
-# data = {'points':testpoints}
-points = pd.Series( data=testpoints )
-df2 = pd.DataFrame( columns=rotations )
-print(df2)
+# Is Point Above Line?
 def isAbove(point,m,b):
   if (point[1] > m * point[0] + b):
     return True
-  
+
+# Perform Each Rotation
 for i in rotations: 
-  df2[i] = points.apply( isAbove, args=(m[i],b[i]) ) 
+  results[i] = points.apply( isAbove, args=(m[i],b[i]) ) 
 
 # print(df)
-print(df2)
+print(results)
 
 
-#### Plotting
+## Optional Plotting To Visualize
 
 # Create Subplot
 def subPlot(plot,m,b,testpoints,rotation):
@@ -48,7 +52,7 @@ def subPlot(plot,m,b,testpoints,rotation):
   plot.plot(xl, yl, '-r', label='y='+str(m)+'x+'+str(b))
   plot.title('Graph of ' + str(rotation) + ' Rotation')
   plot.legend(loc='upper left')
-  plot.axis([-20, 20, -20, 20])
+  plot.axis([-50, 50, -50, 50])
   plot.grid()
   for point in testpoints:
     if ( point[1] > point[0] * m + b ):
